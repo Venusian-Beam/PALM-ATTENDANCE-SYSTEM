@@ -1,0 +1,17 @@
+.venv/
+__pycache__/
+.pytest_cache/
+models/
+data/
+config.yaml
+config.kiosk.yaml
+config.server.yaml
+*.zip
+
+# Never publish keys, databases or local tooling
+*.pem
+*.key
+*.db
+*.db-wal
+*.db-shm
+.claude/

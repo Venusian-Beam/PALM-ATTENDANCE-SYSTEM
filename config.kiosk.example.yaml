@@ -1,0 +1,82 @@
+# PAS kiosk configuration (each camera laptop).
+# `python scripts/configure_kiosk.py` creates config.yaml from this file.
+# The kiosk only works after the IT officer adds its MAC address in the admin portal.
+
+role: kiosk
+cache_database: data/kiosk.db
+models_dir: models
+camera_index: 0
+
+kiosk:
+  # The school server, e.g. https://192.168.1.20:8443
+  server_url: ""
+  # The server's certificate, saved (pinned) during setup.
+  server_cert: data/server_cert.pem
+  local_port: 8000
+  open_browser: true
+  # Keep working without the server for this long, then lock.
+  max_offline_hours: 12
+  sync_interval_s: 5
+
+security:
+  recheck_minutes: 5
+  location_timeout_s: 20
+
+attendance:
+  min_session_minutes: 2
+  cooldown_s: 30
+  signout_blinks: 3
+  blink_timeout_s: 8
+  question_timeout_s: 8
+
+face:
+  match_threshold: 0.40
+  min_face_px: 110
+  enroll_samples: 5
+
+liveness:
+  blink_closed: 0.5
+  blink_open: 0.25
+  face_lost_s: 1.5
+
+gestures:
+  nod_threshold: 0.10
+  shake_threshold: 0.25
+
+# Keeps sign-in fast when the kiosk is bumped or shaking. Blurry or shaken frames are
+# skipped, timers pause while that lasts, and after a jolt the face is re-checked
+# instead of the check being cancelled.
+stability:
+  max_shift_frac: 0.02    # camera movement per frame (share of width) still "steady"
+  sharpness_ratio: 0.5    # face must be this sharp compared with recent sharp faces
+  min_sharpness: 15
+  hint_after_s: 1.0       # show "Hold still…" after this long
+  max_grace_s: 4.0        # most time a shake may add to one check
+  reverify_window_s: 2.0  # time to re-confirm the face after a jolt
+
+# Bright light behind students (a window or door). The webcam is always used with its own
+# settings; a dark face is brightened in memory only, to recognise it. The picture on the
+# kiosk screen is shown as the camera takes it.
+lighting:
+  dark_face: 70           # face brightness (0-255) counted as "too dark"
+  backlit_gap: 60         # background this much brighter than the face = backlit
+  target_face: 130        # brighten dark faces to about this level
+  hint_after_s: 1.5       # show "Too much light behind you" after this long
+
+# Photos, phones, screens and other objects held up to the camera are blocked: the
+# picture is blurred, the student is asked to remove it, and the IT officer is told.
+# "threshold" can be tuned per kiosk from the admin portal (Devices > Tune).
+antispoof:
+  threshold: 0.3
+  smooth_frames: 10
+  min_scores: 8
+  low_share: 0.7
+  min_face_px: 60
+  object_score: 0.55
+  object_every_n: 3
+  frame_edges: true
+  planarity: true
+  no_blink_s: 5.0
+  suspect_score: 0.6
+  blink_shape_change: 0.05
+  clean_for_s: 1.0

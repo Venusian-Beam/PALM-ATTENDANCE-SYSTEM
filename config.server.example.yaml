@@ -1,0 +1,24 @@
+# PAS server configuration (the school server PC).
+# `python scripts/configure_server.py` creates config.yaml from this file.
+# School Wi-Fi, location and the clock-out time are edited in the admin portal.
+
+role: server
+database: data/pas.db
+
+server:
+  port: 8443
+  cert_file: data/cert.pem
+  key_file: data/key.pem
+  # Optional: only allow these networks, e.g. ["192.168.1.0/24"]. Empty = any.
+  admin_allowed_networks: []
+  device_allowed_networks: []
+  # Daily database backups in data/backups are kept this many days.
+  backups_keep_days: 30
+
+attendance:
+  # Initial clock-out time (the admin portal can change it).
+  clock_out_after: "17:30"
+
+face:
+  # Used for the duplicate-face check when registering.
+  match_threshold: 0.40
